@@ -24,16 +24,16 @@ async def upload_json(message: telebot.types.Message):
             await bot.reply_to(message, "Loading json...")
 
             file_id_info = await bot.get_file(message.document.file_id)
-            downloaded_file_data = str(await bot.download_file(file_id_info.file_path))
+            downloaded_file_data = await bot.download_file(file_id_info.file_path)
 
             await bot.reply_to(message, "Uploaded. Wait til check.")
 
-            result = ali.calculate_from_json(downloaded_file_data)
+            result = ali.calculate_from_json(downloaded_file_data.decode("utf-8"))
             
             await bot.reply_to(message, f"This computer build cost is: {result} ₽")
 
         except Exception as e:
-            
+
             await bot.reply_to(message, e.__str__())
     
     else:

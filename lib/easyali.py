@@ -3,6 +3,9 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(filename='/logs/easyali.log', filemode='w+')
 
 class AliException(Exception):
     
@@ -64,6 +67,8 @@ class EasyAli():
             raise AliException(f"Can't get price from page: {link}. Exception info: {e.__str__()}")
 
     def calculate_from_json(self, json_data_str: str) -> float:
+
+        logging.debug(f"Json input: {json_data_str}")
 
         data = json.loads(json_data_str)
 
