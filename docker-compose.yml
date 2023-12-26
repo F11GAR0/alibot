@@ -11,7 +11,7 @@ services:
     privileged: true
     environment:
       - SE_VNC_NO_PASSWORD=1
-      - SE_NODE_MAX_SESSIONS=3
+      - SE_NODE_MAX_SESSIONS=12
   alibot:
     image: alibot
     build:
