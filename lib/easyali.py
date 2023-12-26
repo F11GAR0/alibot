@@ -76,7 +76,7 @@ class EasyAli():
 
         for el in data["elements"]:
 
-            price = self.get_price_from_page(el["link"]) * el["count"]
+            price = int(self.get_price_from_page(el["link"]) * el["count"])
             total_price += price
 
         return total_price
