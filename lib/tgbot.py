@@ -4,29 +4,29 @@ from telebot.async_telebot import AsyncTeleBot
 from lib.easyali import EasyAli
 from lib.db import DataBase
 
-from config import TG_BOT_TOKEN, DOCKER, SQLALCHEMY_DATABASE_URI
+from config import TG_BOT_TOKEN, DOCKER, DATABASE_PATH, DATABASE_URI
 
 
 bot = AsyncTeleBot(TG_BOT_TOKEN, parse_mode="HTML")
 ali = EasyAli(docker_is_used=DOCKER)
-db = DataBase(SQLALCHEMY_DATABASE_URI)
+db = DataBase(DATABASE_PATH)
 
 def register_need(func):
 
-    async def wrap(*args, **kwargs):
+    def wrap(*args, **kwargs):
         message = kwargs.get("message", None)
         if not message is None:
             if db.user_exists(message.from_user.id):
                 return func(*args, **kwargs)
             else:
-                await bot.reply_to(message, "You need to register by enter /start")
+                bot.reply_to(message, "You need to register by enter /start")
         return func(*args, **kwargs)
     
     return wrap
 
 def auto_register(func):
 
-    async def wrap(*args, **kwargs):
+    def wrap(*args, **kwargs):
         message = kwargs.get("message", None)
         if not message is None:
             if not db.user_exists(message.from_user.id):
@@ -58,7 +58,7 @@ async def upload_json(message: telebot.types.Message):
             else:
                 db.upload_build(message.from_user.id, str_data)
                 await bot.reply_to(message, "Build uploaded. Wait til check.")
-                
+
             price, errors = ali.calculate_from_json(str_data)
             
             await bot.reply_to(message, f"This computer build cost is: {price} RUB. Errors: {errors[:86]}")

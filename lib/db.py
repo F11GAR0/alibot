@@ -6,12 +6,16 @@ logging.basicConfig(level=logging.DEBUG)
 
 class DataBase:
 
-    def __init__(self, db_uri):
+    def __init__(self, db, uri=False):
         
+        logging.debug("Initialize database.")
+
         try:
-            self.connection = sqlite3.connect(db_uri, uri=True)
+            self.connection = sqlite3.connect(db, uri=uri)
             self._init_cursor()
             self._init_table_if_not_exists()
+
+            logging.debug(self.cursor.fetchall())
         except Exception as e:
             logging.debug(f"DB: {e.__str__()}")
 
@@ -19,7 +23,7 @@ class DataBase:
 
         self.cursor = self.connection.cursor()
 
-    def _execute_with_commit(self, __sql : str, __parameters):
+    def _execute_with_commit(self, __sql : str, __parameters = ()):
 
         self.cursor.execute(__sql, __parameters)
         self.connection.commit()
