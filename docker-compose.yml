@@ -12,9 +12,16 @@ services:
     environment:
       - SE_VNC_NO_PASSWORD=1
       - SE_NODE_MAX_SESSIONS=12
+  sqlite3:
+    image: nouchka/sqlite3:latest
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./db/:/root/db/
   alibot:
     image: alibot
     build:
       context: .
       dockerfile: ./Dockerfile
+
   

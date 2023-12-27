@@ -23,6 +23,10 @@ class EasyAli():
         if kwargs.get("docker_is_used", False):
 
             options = webdriver.ChromeOptions()
+            options.add_argument("--headless=new")
+            options.add_argument("--disable-gpu")
+            options.add_argument("--dns-prefetch-disabled")
+            options.add_argument("--blink-settings=imagesEnabled=false")
             options.add_argument('--ignore-ssl-errors=yes')
             options.add_argument('--ignore-certificate-errors')
             
@@ -60,23 +64,30 @@ class EasyAli():
         
         try:
             self.navigate(link)
-            price = self.driver.find_element(By.XPATH, "/html/body/div[2]/div/div[9]/div/div[4]/div/div[1]/div[1]/div/div[2]/div[2]")
+            try:
+                price = self.driver.find_element(By.XPATH, "/html/body/div[2]/div/div[9]/div/div[4]/div/div[1]/div[1]/div/div[2]/div[2]")
+            except:
+                price = self.driver.find_element(By.XPATH, "//*[@id=\"__aer_root__\"]/div/div[9]/div/div[4]/div/div[1]/div[1]/div/div/div[2]")
             f_price = price.text.replace(" ", "").replace("₽", "")
             return f_price
         except Exception as e:
             raise AliException(f"Can't get price from page: {link}. Exception info: {e.__str__()}")
 
-    def calculate_from_json(self, json_data_str: str) -> float:
+    def calculate_from_json(self, json_data_str: str):
 
         logging.debug(f"Json input: {json_data_str}")
 
         data = json.loads(json_data_str)
 
         total_price = 0
+        errors = ""
 
         for el in data["elements"]:
 
-            price = int(self.get_price_from_page(el["link"]) * el["count"])
-            total_price += price
+            try:
+                price = int(self.get_price_from_page(el["link"])) * el["count"]
+                total_price += price
+            except AliException as e:
+                errors += e.__str__()
 
-        return total_price
+        return total_price, errors
