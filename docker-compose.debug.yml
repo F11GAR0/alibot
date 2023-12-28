@@ -19,7 +19,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./db/:/root/db/
+      - db:/root/db/
     networks:
       - mynetwork
   alibot:
@@ -32,5 +32,18 @@ services:
       - 5678:5678
     depends_on:
       - selenium
+    volumes:
+      - db:/mnt/db/
     networks:
       - mynetwork
+
+volumes:
+  db:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/db
+    
+networks:
+  mynetwork:
