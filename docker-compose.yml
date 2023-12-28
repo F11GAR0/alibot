@@ -1,27 +1,36 @@
 version: '3.4'
 
-
-
 services:
   selenium:
+    container_name: 'selenium'
     image: selenium/standalone-chrome:latest
-    hostname: chrome
-    network_mode: "host"
     shm_size: 2g
-    privileged: true
     environment:
       - SE_VNC_NO_PASSWORD=1
-      - SE_NODE_MAX_SESSIONS=12
+      - SE_NODE_MAX_SESSIONS=3
+    ports:
+      - "5900:5900"
+      - "4444:4444"
+    privileged: true
+    networks:
+      - mynetwork
   sqlite3:
     image: nouchka/sqlite3:latest
     stdin_open: true
     tty: true
     volumes:
       - ./db/:/root/db/
+    networks:
+      - mynetwork
   alibot:
     image: alibot
     build:
       context: .
       dockerfile: ./Dockerfile
+    depends_on:
+      - selenium
+    networks:
+      - mynetwork
 
-  
+networks:
+  mynetwork:

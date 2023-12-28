@@ -1,4 +1,5 @@
 import json
+import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -23,17 +24,30 @@ class EasyAli():
         if kwargs.get("docker_is_used", False):
 
             options = webdriver.ChromeOptions()
-            options.add_argument("--headless=new")
-            options.add_argument("--disable-gpu")
-            options.add_argument("--dns-prefetch-disabled")
-            options.add_argument("--blink-settings=imagesEnabled=false")
+            #options.add_argument("--headless=true")
+            #options.add_argument("--disable-gpu")
+            # options.add_argument("--dns-prefetch-disabled")
+            #options.add_argument("--blink-settings=imagesEnabled=false")
             options.add_argument('--ignore-ssl-errors=yes')
             options.add_argument('--ignore-certificate-errors')
+
+            selenium_host = "selenium"
+            selenium_port = 4444
+
+            url = f"http://{selenium_host}:{selenium_port}/wd/hub"
             
-            self.driver = webdriver.Remote(
-                command_executor='http://172.20.0.1:4444/wd/hub',
-                options=options
-            )
+            max_attempts = 10
+            for attempt in range(max_attempts):
+                try:
+                    self.driver = webdriver.Remote(command_executor=url, options=options)
+                    logging.debug("Соединение с Selenium успешно установлено")
+                    break
+                except Exception as e:
+                    logging.debug(f"Ошибка при попытке подключения к Selenium (попытка {attempt + 1}/{max_attempts}): {e}")
+                    time.sleep(5)  # Подождем 5 секунд перед следующей попыткой
+            else:
+                raise RuntimeError("Не удалось подключиться к Selenium после нескольких попыток")
+
 
         else:
             

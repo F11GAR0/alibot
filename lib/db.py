@@ -41,26 +41,26 @@ CREATE TABLE IF NOT EXISTS Builds (
 id INTEGER PRIMARY KEY,
 telegram_id INTEGER NOT NULL,
 json_info TEXT NOT NULL,
-hash TEXT NOT NULL,
+hash TEXT NOT NULL
 )
 ''')
     
     def user_exists(self, telegram_id : int):
 
-        self._execute_with_commit('SELECT * FROM Users WHERE telegram_id = ?', (telegram_id) )
+        self._execute_with_commit('SELECT * FROM Users WHERE telegram_id = ?', (telegram_id,) )
         total_users = len(self.cursor.fetchall())
 
         return total_users > 0
 
     def register_user(self, telegram_id : int):
 
-        self._execute_with_commit('INSERT INTO Users (telegram_id) VALUES (?)', (telegram_id) )
+        self._execute_with_commit('INSERT INTO Users (telegram_id) VALUES (?)', (telegram_id,) )
 
     def build_exists(self, json_data : str):
 
         js_hash = hashlib.md5(json_data.encode()).hexdigest()
 
-        self._execute_with_commit('SELECT * FROM Builds WHERE hash = ?', (js_hash) )
+        self._execute_with_commit('SELECT * FROM Builds WHERE hash = ?', (js_hash,) )
         total_builds = len(self.cursor.fetchall())
 
         return total_builds > 0
@@ -69,7 +69,7 @@ hash TEXT NOT NULL,
 
         js_hash = hashlib.md5(json_data.encode()).hexdigest()
 
-        self._execute_with_commit('INSERT INTO Builds (telegram_id, json_info, hash) VALUES (?)', (telegram_id, json_data, js_hash) )
+        self._execute_with_commit('INSERT INTO Builds (telegram_id, json_info, hash) VALUES (?)', (telegram_id, json_data, js_hash,) )
 
     def __del__(self):
 

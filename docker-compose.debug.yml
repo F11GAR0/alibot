@@ -1,6 +1,27 @@
 version: '3.4'
 
 services:
+  selenium:
+    container_name: 'selenium'
+    image: selenium/standalone-chrome:latest
+    shm_size: 2g
+    environment:
+      - SE_VNC_NO_PASSWORD=1
+      - SE_NODE_MAX_SESSIONS=3
+    ports:
+      - "5900:5900"
+      - "4444:4444"
+    privileged: true
+    networks:
+      - mynetwork
+  sqlite3:
+    image: nouchka/sqlite3:latest
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./db/:/root/db/
+    networks:
+      - mynetwork
   alibot:
     image: alibot
     build:
@@ -9,3 +30,7 @@ services:
     command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 main.py "]
     ports:
       - 5678:5678
+    depends_on:
+      - selenium
+    networks:
+      - mynetwork
