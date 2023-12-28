@@ -57,5 +57,6 @@ docker exec -d alibot-dev python3 /debugpy/launcher 172.17.0.1:54775 -- main.py
 ```sh
 TG_BOT_TOKEN = "" # telegram bot token from bot father
 DOCKER = True # True - if you want to use docker, False - if not
-SQLALCHEMY_DATABASE_URI = 'sqlite:////alidb/' # path to database
+DATABASE_URI = 'sqlite:////root/db/ali.db'
+DATABASE_PATH = '/app/db/ali.db'
 ```

@@ -4,12 +4,12 @@ from telebot.async_telebot import AsyncTeleBot
 from lib.easyali import EasyAli
 from lib.db import DataBase
 
-from config import TG_BOT_TOKEN, DOCKER, DATABASE_PATH, DATABASE_URI
+from config import TG_BOT_TOKEN, DOCKER, DATABASE_PATH, DATABASE_URI, DATABASE_PATH_NO_DOCKER
 
 
 bot = AsyncTeleBot(TG_BOT_TOKEN, parse_mode="HTML")
 ali = EasyAli(docker_is_used=DOCKER)
-db = DataBase(DATABASE_PATH)
+db = DataBase(DATABASE_PATH if DOCKER else DATABASE_PATH_NO_DOCKER)
 
 def register_need(func):
 
