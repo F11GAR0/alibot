@@ -1,3 +1,4 @@
+import time
 import sqlite3
 import hashlib
 
@@ -44,6 +45,14 @@ json_info TEXT NOT NULL,
 hash TEXT NOT NULL
 )
 ''')
+        self._execute_with_commit('''
+CREATE TABLE IF NOT EXISTS BuildsPriceHistory (
+id INTEGER PRIMARY KEY,
+build_id INTEGER NOT NULL,
+price TEXT NOT NULL,
+timestamp TIMESTAMP NOT NULL
+)
+''')
     
     def user_exists(self, telegram_id : int):
 
@@ -65,11 +74,25 @@ hash TEXT NOT NULL
 
         return total_builds > 0
 
-    def upload_build(self, telegram_id : int, json_data : str):
+    def upload_build(self, telegram_id : int, json_data : str) -> int:
+        
+        """
+        Uploads build into database.
+        Returns:
+            int: inserted build_id
+        """
 
         js_hash = hashlib.md5(json_data.encode()).hexdigest()
 
-        self._execute_with_commit('INSERT INTO Builds (telegram_id, json_info, hash) VALUES (?)', (telegram_id, json_data, js_hash,) )
+        self._execute_with_commit('INSERT INTO Builds (telegram_id, json_info, hash) VALUES (?, ?, ?)', (telegram_id, json_data, js_hash,) )
+        self._execute_with_commit("SELECT last_insert_rowid()")
+        build_id = self.cursor.fetchone()[0]
+
+        return build_id
+
+    def push_price_to_history(self, build_id: int, price: str):
+
+        self._execute_with_commit('INSERT INTO BuildsPriceHistory (build_id, price, timestamp) VALUES (?, ?, ?)', (build_id, price, time.time(), ))
 
     def __del__(self):
 
