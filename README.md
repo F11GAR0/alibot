@@ -1,3 +1,4 @@
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/F11GAR0/alibot/python-app.yml) ![Static Badge](https://img.shields.io/badge/contributors-1-blue) ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/m/F11GAR0/alibot) ![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/F11GAR0/alibot)
 # ALIBOT
 ## Run steps
 
